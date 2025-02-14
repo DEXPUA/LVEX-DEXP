@@ -266,6 +266,11 @@
         text-align: center;
         background: rgba(0, 0, 0, 0.5);
         box-shadow: 0 0 10px rgba(155, 89, 182, 0.7);
+        transition: transform 0.2s ease;
+      }
+      .shop-item:hover {
+        transform: scale(1.02);
+        box-shadow: 0 0 15px rgba(155, 89, 182, 0.9);
       }
       /* Shake-ефект для невдалої покупки */
       @keyframes shake {
@@ -297,30 +302,6 @@
       #promoBtn {
         margin-left: 10px;
       }
-      /* Модальне вікно для Terms & Conditions */
-      #termsModal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.8);
-        z-index: 5;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      #termsModal .modal-content {
-        background: #1a001a;
-        padding: 20px;
-        border: 2px solid #9b59b6;
-        border-radius: 10px;
-        max-width: 90%;
-        text-align: center;
-      }
-      #termsModal h2 {
-        margin-top: 0;
-      }
       /* Модальне вікно для дропу */
       #dropModal {
         display: none;
@@ -346,7 +327,51 @@
         color: inherit;
         text-decoration: none;
       }
-      /* Responsive design */
+      /* Сучасний інтерфейс для вкладок (окрім головної) */
+      .tab-content:not(#main) {
+        background: rgba(0, 0, 0, 0.6);
+        border: 2px solid rgba(155, 89, 182, 0.7);
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px auto;
+        max-width: 90%;
+        box-shadow: 0 0 15px rgba(155, 89, 182, 0.7);
+      }
+      .tab-content:not(#main) h2 {
+        font-size: 28px;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #9b59b6;
+        padding-bottom: 10px;
+        background: linear-gradient(45deg, #9b59b6, #e74c3c);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+      }
+      .tab-content:not(#main) p,
+      .tab-content:not(#main) li {
+        font-size: 18px;
+        line-height: 1.5;
+      }
+      #tasks ul {
+        list-style-type: square;
+        margin-left: 20px;
+      }
+      #stats p {
+        background: rgba(0, 0, 0, 0.7);
+        padding: 10px;
+        border-radius: 8px;
+        margin: 10px 0;
+      }
+      #promo input,
+      #promo button {
+        font-size: 18px;
+      }
+      #promo input {
+        padding: 8px;
+        border-radius: 5px;
+        border: none;
+        font-family: "Orbitron", sans-serif;
+      }
       @media (max-width: 768px) {
         #tapCircle {
           width: 250px;
@@ -392,32 +417,22 @@
     </style>
   </head>
   <body>
-    <!-- Модальне вікно для Terms & Conditions -->
-    <div id="termsModal">
-      <div class="modal-content">
-        <h2>Terms and Conditions</h2>
-        <p>
-          By submitting a new app, you confirm that you have read and agreed to the
-          Terms and Conditions of the Telegram Apps Center.
-        </p>
-        <p>Please ensure that your app complies with all guidelines, including the following:</p>
-        <ul>
-          <li>App exclusively uses the TON Blockchain;</li>
-          <li>App interfaces with cryptocurrency wallets with the TON Connect SDK;</li>
-          <li>App has integrated Telegram Mini Apps Analytics SDK.</li>
-        </ul>
-        <button id="agreeTerms" class="btn">I Agree</button>
-      </div>
-    </div>
     <!-- 3D Атом -->
     <div id="atom">
       <div class="atom-body">
         <div class="nucleus"></div>
-        <div class="orbit orbit1"><div class="electron"></div></div>
-        <div class="orbit orbit2"><div class="electron"></div></div>
-        <div class="orbit orbit3"><div class="electron"></div></div>
+        <div class="orbit orbit1">
+          <div class="electron"></div>
+        </div>
+        <div class="orbit orbit2">
+          <div class="electron"></div>
+        </div>
+        <div class="orbit orbit3">
+          <div class="electron"></div>
+        </div>
       </div>
     </div>
+
     <!-- Контейнер контенту -->
     <div class="container">
       <!-- Головна вкладка -->
@@ -435,6 +450,7 @@
           (натисни на круг для майнінгу)
         </p>
       </div>
+
       <!-- Завдання -->
       <div id="tasks" class="tab-content">
         <h2>Завдання</h2>
@@ -452,6 +468,7 @@
         <button class="btn" id="progressBtn">Підвищити прогрес</button>
         <p id="progressText" style="text-align:center;">Прогрес: 0%</p>
       </div>
+
       <!-- Статистика -->
       <div id="stats" class="tab-content">
         <h2>Статистика</h2>
@@ -461,6 +478,7 @@
         <p>Монети: <span id="statsCoins">0</span> DEXP</p>
         <p>Майнінг потужність: <span id="statsMiningPower">1</span></p>
       </div>
+
       <!-- Магазин -->
       <div id="shop" class="tab-content">
         <h2>Магазин</h2>
@@ -483,6 +501,7 @@
           <button class="btn buyItemBtn">Купити</button>
         </div>
       </div>
+
       <!-- Промокоди -->
       <div id="promo" class="tab-content">
         <h2>Промокоди</h2>
@@ -493,6 +512,7 @@
         </div>
       </div>
     </div>
+
     <!-- Нижнє меню -->
     <div class="nav">
       <button class="tab-btn active" data-tab="main">Головна</button>
@@ -501,11 +521,15 @@
       <button class="tab-btn" data-tab="shop">Магазин</button>
       <button class="tab-btn" data-tab="promo">Промокоди</button>
     </div>
+
     <!-- Модальне вікно для дропу -->
     <div id="dropModal">
       <div>
         <h2>Вітаємо!</h2>
-        <p>Ви досягли 100000 DEXP. Зв’яжіться з адміністрацією для отримання дропу.</p>
+        <p>
+          Ви досягли 100000 DEXP. Зв’яжіться з адміністрацією для отримання
+          дропу.
+        </p>
         <button class="btn" id="dropButton">
           <a href="https://t.me/DELXPUA" target="_blank">Отримати дроп</a>
         </button>
@@ -513,15 +537,9 @@
         <button class="btn" id="closeDropModal">Закрити</button>
       </div>
     </div>
+
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        // Показати модальне вікно з Terms & Conditions до початку роботи додатку
-        const termsModal = document.getElementById("termsModal");
-        const agreeTermsBtn = document.getElementById("agreeTerms");
-        agreeTermsBtn.addEventListener("click", function () {
-          termsModal.style.display = "none";
-        });
-        
         // Головні змінні гри
         let coins = 0,
           miningPower = 1,
@@ -531,7 +549,7 @@
         const maxEnergy = 100;
         const energyRegenInterval = 10000; // 10 секунд (можна налаштувати)
         let lastTapTime = 0;
-        
+
         // Завантаження з localStorage (якщо є збережені дані)
         const savedData = localStorage.getItem("gameData");
         if (savedData) {
@@ -546,16 +564,18 @@
             if (data.shopItems && data.shopItems.length === shopItems.length) {
               shopItems.forEach((item, idx) => {
                 item.setAttribute("data-cost", data.shopItems[idx].cost);
-                item.querySelector(".itemCost").innerText = data.shopItems[idx].cost;
+                item.querySelector(".itemCost").innerText =
+                  data.shopItems[idx].cost;
               });
             }
             document.getElementById("progressBar").style.width = progress + "%";
-            document.getElementById("progressText").innerText = "Прогрес: " + progress + "%";
+            document.getElementById("progressText").innerText =
+              "Прогрес: " + progress + "%";
           } catch (e) {
             console.error("Помилка завантаження збережених даних:", e);
           }
         }
-        
+
         // Функція оновлення статистики та збереження даних
         function updateStats() {
           document.getElementById("balanceCoins").innerText = coins;
@@ -566,16 +586,25 @@
           saveGame();
         }
         function saveGame() {
-          const shopItems = Array.from(document.querySelectorAll(".shop-item")).map((item) => ({
-            cost: item.getAttribute("data-cost")
+          const shopItems = Array.from(
+            document.querySelectorAll(".shop-item")
+          ).map((item) => ({
+            cost: item.getAttribute("data-cost"),
           }));
-          const gameData = { coins, miningPower, energy, progress, dropModalShown, shopItems };
+          const gameData = {
+            coins,
+            miningPower,
+            energy,
+            progress,
+            dropModalShown,
+            shopItems,
+          };
           localStorage.setItem("gameData", JSON.stringify(gameData));
         }
         // Автоматичне збереження кожні 10 секунд та перед закриттям сторінки
         setInterval(saveGame, 10000);
         window.addEventListener("beforeunload", saveGame);
-        
+
         // Обробка вкладок
         const tabButtons = document.querySelectorAll(".tab-btn");
         const tabContents = document.querySelectorAll(".tab-content");
@@ -586,29 +615,35 @@
             this.classList.add("active");
             const tabId = this.getAttribute("data-tab");
             document.getElementById(tabId).classList.add("active");
-            document.getElementById("balanceDisplay").style.display = tabId === "main" ? "block" : "none";
+            document.getElementById("balanceDisplay").style.display =
+              tabId === "main" ? "block" : "none";
           });
         });
-        
+
         // Прогрес-бар (завдання)
-        document.getElementById("progressBtn").addEventListener("click", function () {
-          progress = Math.min(progress + 10, 100);
-          document.getElementById("progressBar").style.width = progress + "%";
-          document.getElementById("progressText").innerText = "Прогрес: " + progress + "%";
-          if (progress === 100) {
-            alert("Новий рівень відкрито!");
-            progress = 0;
-            document.getElementById("progressBar").style.width = "0%";
-            document.getElementById("progressText").innerText = "Прогрес: 0%";
-          }
-          saveGame();
-        });
-        
+        document
+          .getElementById("progressBtn")
+          .addEventListener("click", function () {
+            progress = Math.min(progress + 10, 100);
+            document.getElementById("progressBar").style.width = progress + "%";
+            document.getElementById("progressText").innerText =
+              "Прогрес: " + progress + "%";
+            if (progress === 100) {
+              alert("Новий рівень відкрито!");
+              progress = 0;
+              document.getElementById("progressBar").style.width = "0%";
+              document.getElementById("progressText").innerText =
+                "Прогрес: 0%";
+            }
+            saveGame();
+          });
+
         // Матричний ефект у canvas
         const circleCanvas = document.getElementById("circleCanvas");
         const ctx = circleCanvas.getContext("2d");
         const circleFontSize = 16;
-        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()-=+{}[]";
+        const letters =
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()-=+{}[]";
         const columns = Math.floor(circleCanvas.width / circleFontSize);
         const drops = Array(columns).fill(1);
         setInterval(function draw() {
@@ -625,7 +660,7 @@
             drops[i]++;
           }
         }, 50);
-        
+
         // Майнінг: натискання на круг
         document.getElementById("tapCircle").addEventListener("click", function () {
           const now = Date.now();
@@ -639,7 +674,7 @@
           coins += miningPower;
           updateStats();
         });
-        
+
         // Відновлення енергії
         setInterval(function () {
           if (energy < maxEnergy) {
@@ -647,7 +682,7 @@
             updateStats();
           }
         }, energyRegenInterval);
-        
+
         // Покупки в магазині (з ефектом shake при недостатньому балансі)
         document.querySelectorAll(".buyItemBtn").forEach((btn) => {
           btn.addEventListener("click", function () {
@@ -667,7 +702,7 @@
             }
           });
         });
-        
+
         // Промокоди
         const promoCodes = {
           "6ZWOYE84": { bonus: 43548, used: false },
@@ -704,7 +739,7 @@
           }
           document.getElementById("promoInput").value = "";
         });
-        
+
         // Перевірка для показу модального вікна (дроп)
         function checkForDrop() {
           if (coins >= 100000 && !dropModalShown) {
@@ -712,15 +747,17 @@
             document.getElementById("dropModal").style.display = "flex";
           }
         }
-        
+
         // Обробка модального вікна для дропу
-        document.getElementById("closeDropModal").addEventListener("click", function () {
-          document.getElementById("dropModal").style.display = "none";
-          saveGame();
-        });
-        
+        document
+          .getElementById("closeDropModal")
+          .addEventListener("click", function () {
+            document.getElementById("dropModal").style.display = "none";
+            saveGame();
+          });
+
         updateStats();
-        
+
         // Telegram Mini Apps інтеграція
         if (window.Telegram && window.Telegram.WebApp) {
           window.Telegram.WebApp.ready();
