@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dexp </title>
+    <!-- Telegram Web Apps API для інтеграції в Telegram Mini Apps -->
+    <script async src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Підключення шрифту Orbitron для кіберпанк стилю -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
+    <style>
+      /* Загальні стилі */
+      * {
+        -webkit-tap-highlight-color: transparent;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: "Orbitron", sans-serif;
+        color: #fff;
+        background: radial-gradient(ellipse at center, #000 0%, #1a001a 100%);
+        overflow: hidden;
+      }
+      /* Контейнер основного контенту */
+      .container {
+        position: relative;
+        z-index: 2;
+        padding: 20px;
+        padding-bottom: 120px; /* місце для нижнього меню */
+        height: 100%;
+        overflow-y: auto;
+      }
+      /* Баланс та енергія */
+      #balanceDisplay {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        background: rgba(0, 0, 0, 0.6);
+        padding: 10px 15px;
+        border-radius: 10px;
+        font-size: 18px;
+        box-shadow: 0 0 10px rgba(155, 89, 182, 0.7);
+        z-index: 3;
+      }
+      /* 3D Атом */
+      #atom {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        width: 120px;
+        height: 120px;
+        perspective: 800px;
+        z-index: 3;
+      }
+      #atom .atom-body {
+        width: 100%;
+        height: 100%;
+        transform-style: preserve-3d;
+        animation: atomSpin 10s linear infinite;
+      }
+      @keyframes atomSpin {
+        from {
+          transform: rotateX(0deg) rotateY(0deg);
+        }
+        to {
+          transform: rotateX(360deg) rotateY(360deg);
+        }
+      }
+      #atom .nucleus {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 14px;
+        height: 14px;
+        background: #fff;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 10px #9b59b6;
+      }
+      #atom .orbit {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        border: 1px dashed rgba(155, 89, 182, 0.7);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+      }
+      #atom .orbit .electron {
+        position: absolute;
+        top: -4px;
+        left: 50%;
+        width: 8px;
+        height: 8px;
+        background: #9b59b6;
+        border-radius: 50%;
+        transform: translateX(-50%);
+        box-shadow: 0 0 6px #9b59b6;
+      }
+      /* Анімації орбіт */
+      #atom .orbit.orbit1 {
+        width: 50px;
+        height: 50px;
+        animation: orbitRotate1 4s linear infinite;
+      }
+      #atom .orbit.orbit2 {
+        width: 70px;
+        height: 70px;
+        animation: orbitRotate2 6s linear infinite;
+      }
+      #atom .orbit.orbit3 {
+        width: 90px;
+        height: 90px;
+        animation: orbitRotate3 8s linear infinite;
+      }
+      @keyframes orbitRotate1 {
+        from {
+          transform: translate(-50%, -50%) rotate(0deg);
+        }
+        to {
+          transform: translate(-50%, -50%) rotate(360deg);
+        }
+      }
+      @keyframes orbitRotate2 {
+        from {
+          transform: translate(-50%, -50%) rotateX(45deg) rotate(0deg);
+        }
+        to {
+          transform: translate(-50%, -50%) rotateX(45deg) rotate(360deg);
+        }
+      }
+      @keyframes orbitRotate3 {
+        from {
+          transform: translate(-50%, -50%) rotateY(45deg) rotate(0deg);
+        }
+        to {
+          transform: translate(-50%, -50%) rotateY(45deg) rotate(360deg);
+        }
+      }
+      /* Круг для майнінгу */
+      #tapCircle {
+        position: relative;
+        width: 300px;
+        height: 300px;
+        margin: 80px auto 0;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 4px solid rgba(155, 89, 182, 0.7);
+        box-shadow: 0 0 15px rgba(155, 89, 182, 0.9);
+        background: rgba(0, 0, 0, 0.4);
+        cursor: pointer;
+        transition: transform 0.1s ease;
+      }
+      #tapCircle:active {
+        transform: scale(0.95);
+      }
+      #tapCircle:focus {
+        outline: none;
+      }
+      #circleCanvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      .dexpText {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 48px;
+        color: #fff;
+        text-shadow: 0 0 10px #9b59b6;
+        pointer-events: none;
+        z-index: 2;
+      }
+      /* Вкладки (контент сторінок) */
+      .tab-content {
+        display: none;
+        animation: fadeIn 0.5s;
+      }
+      .tab-content.active {
+        display: block;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      /* Нижнє меню */
+      .nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0, 0, 0, 0.85);
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        padding: 10px 5px;
+        border-top: 1px solid rgba(155, 89, 182, 0.5);
+        z-index: 3;
+      }
+      .nav button {
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 14px;
+        padding: 5px 10px;
+        border-radius: 8px;
+        transition: background 0.2s, transform 0.2s;
+      }
+      .nav button:hover {
+        background: rgba(155, 89, 182, 0.2);
+        transform: scale(1.05);
+      }
+      .nav button.active {
+        background: rgba(155, 89, 182, 0.4);
+      }
+      /* Прогрес-бар */
+      .progress-container {
+        width: 80%;
+        background-color: rgba(0, 0, 0, 0.3);
+        border: 2px solid #9b59b6;
+        border-radius: 10px;
+        margin: 20px auto;
+        padding: 5px;
+      }
+      .progress-bar {
+        width: 0%;
+        height: 20px;
+        background-color: #9b59b6;
+        border-radius: 8px;
+        transition: width 0.4s ease;
+      }
+      /* Стилі кнопок */
+      .btn {
+        display: block;
+        margin: 10px auto;
+        padding: 10px 20px;
+        background: rgba(155, 89, 182, 0.7);
+        border: none;
+        border-radius: 10px;
+        color: #fff;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+      .btn:hover {
+        background: rgba(155, 89, 182, 1);
+      }
+      /* Магазин */
+      .shop-item {
+        border: 2px solid #9b59b6;
+        border-radius: 10px;
+        padding: 15px;
+        margin: 15px auto;
+        max-width: 300px;
+        text-align: center;
+        background: rgba(0, 0, 0, 0.5);
+        box-shadow: 0 0 10px rgba(155, 89, 182, 0.7);
+      }
+      /* Shake-ефект для невдалої покупки */
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        50% { transform: translateX(5px); }
+        75% { transform: translateX(-5px); }
+      }
+      /* Промокоди */
+      #promoSection {
+        text-align: center;
+        margin: 20px auto;
+      }
+      #promoInput {
+        padding: 8px;
+        border-radius: 5px;
+        border: none;
+        font-family: "Orbitron", sans-serif;
+        font-size: 16px;
+      }
+      #promoBtn {
+        margin-left: 10px;
+      }
+      /* Responsive design */
+      @media (max-width: 768px) {
+        #tapCircle {
+          width: 250px;
+          height: 250px;
+        }
+        .dexpText {
+          font-size: 40px;
+        }
+        #atom {
+          width: 100px;
+          height: 100px;
+        }
+        #balanceDisplay {
+          font-size: 16px;
+          padding: 8px 10px;
+        }
+        .nav button {
+          font-size: 13px;
+          padding: 5px 8px;
+        }
+      }
+      @media (max-width: 480px) {
+        #tapCircle {
+          width: 200px;
+          height: 200px;
+        }
+        .dexpText {
+          font-size: 32px;
+        }
+        #atom {
+          width: 80px;
+          height: 80px;
+        }
+        #balanceDisplay {
+          font-size: 14px;
+          padding: 8px 10px;
+        }
+        .nav button {
+          font-size: 12px;
+          padding: 4px 6px;
+        }
+      }
+      /* Модальне вікно для дропу */
+      #dropModal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 4;
+        align-items: center;
+        justify-content: center;
+      }
+      #dropModal > div {
+        background: #1a001a;
+        padding: 20px;
+        border: 2px solid #9b59b6;
+        border-radius: 10px;
+        text-align: center;
+        max-width: 90%;
+      }
+      #dropModal a {
+        color: inherit;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 3D Атом -->
+    <div id="atom">
+      <div class="atom-body">
+        <div class="nucleus"></div>
+        <div class="orbit orbit1"><div class="electron"></div></div>
+        <div class="orbit orbit2"><div class="electron"></div></div>
+        <div class="orbit orbit3"><div class="electron"></div></div>
+      </div>
+    </div>
+    <!-- Баланс та енергія -->
+    <div id="balanceDisplay">
+      Баланс: <span id="balanceCoins">0</span> DEXP<br />
+      Енергія: <span id="energyDisplay">100</span>/100
+    </div>
+    <!-- Контейнер контенту -->
+    <div class="container">
+      <!-- Головна вкладка -->
+      <div id="main" class="tab-content active">
+        <div id="tapCircle" tabindex="0">
+          <canvas id="circleCanvas" width="300" height="300"></canvas>
+          <div class="dexpText">dexp</div>
+        </div>
+        <p style="text-align:center; font-size:16px; margin-top:10px;">
+          (натисни на круг для майнінгу)
+        </p>
+      </div>
+      <!-- Завдання -->
+      <div id="tasks" class="tab-content">
+        <h2>Завдання</h2>
+        <ul>
+          <li>Зламати головний сервер</li>
+          <li>Здобути доступ до зашифрованих даних</li>
+          <li>Отримати нове обладнання</li>
+        </ul>
+        <button class="btn" id="subscribeBtn" onclick="window.open('https://t.me/dexpua','_blank')">
+          Підписатися на канал
+        </button>
+        <div class="progress-container">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <button class="btn" id="progressBtn">Підвищити прогрес</button>
+        <p id="progressText" style="text-align:center;">Прогрес: 0%</p>
+      </div>
+      <!-- Статистика -->
+      <div id="stats" class="tab-content">
+        <h2>Статистика</h2>
+        <p>Рівень: <span id="levelDisplay">1</span></p>
+        <p>Досвід: <span id="expDisplay">0</span></p>
+        <p>Нагороди: <span id="rewardsDisplay">0</span></p>
+        <p>Монети: <span id="statsCoins">0</span> DEXP</p>
+        <p>Майнінг потужність: <span id="statsMiningPower">1</span></p>
+      </div>
+      <!-- Магазин -->
+      <div id="shop" class="tab-content">
+        <h2>Магазин</h2>
+        <div class="shop-item" data-power="1" data-cost="100">
+          <h3>Майнінг Ріг</h3>
+          <p>Підвищує майнінг потужність на 1.</p>
+          <p>Вартість: <span class="itemCost">100</span> DEXP</p>
+          <button class="btn buyItemBtn">Купити</button>
+        </div>
+        <div class="shop-item" data-power="5" data-cost="500">
+          <h3>Квантовий Процесор</h3>
+          <p>Підвищує майнінг потужність на 5.</p>
+          <p>Вартість: <span class="itemCost">500</span> DEXP</p>
+          <button class="btn buyItemBtn">Купити</button>
+        </div>
+        <div class="shop-item" data-power="20" data-cost="2000">
+          <h3>Голографічний Сервер</h3>
+          <p>Підвищує майнінг потужність на 20.</p>
+          <p>Вартість: <span class="itemCost">2000</span> DEXP</p>
+          <button class="btn buyItemBtn">Купити</button>
+        </div>
+      </div>
+      <!-- Промокоди -->
+      <div id="promo" class="tab-content">
+        <h2>Промокоди</h2>
+        <div id="promoSection">
+          <input type="text" id="promoInput" placeholder="Введіть промокод" />
+          <button class="btn" id="promoBtn">Активувати</button>
+          <div id="promoMessage" style="margin-top:10px;"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Нижнє меню -->
+    <div class="nav">
+      <button class="tab-btn active" data-tab="main">Головна</button>
+      <button class="tab-btn" data-tab="tasks">Завдання</button>
+      <button class="tab-btn" data-tab="stats">Статистика</button>
+      <button class="tab-btn" data-tab="shop">Магазин</button>
+      <button class="tab-btn" data-tab="promo">Промокоди</button>
+    </div>
+    <!-- Модальне вікно для дропу -->
+    <div id="dropModal">
+      <div>
+        <h2>Вітаємо!</h2>
+        <p>Ви досягли 100000 DEXP. Зв’яжіться з адміністрацією для отримання дропу.</p>
+        <button class="btn" id="dropButton">
+          <a href="https://t.me/DELXPUA" target="_blank">Отримати дроп</a>
+        </button>
+        <br />
+        <button class="btn" id="closeDropModal">Закрити</button>
+      </div>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Головні змінні гри
+        let coins = 0,
+          miningPower = 1,
+          energy = 100,
+          progress = 0;
+        let dropModalShown = false;
+        const maxEnergy = 100;
+        const energyRegenInterval = 10000; // 10 секунд (можна налаштувати)
+        let lastTapTime = 0;
+        
+        // Завантаження з localStorage (якщо є збережені дані)
+        const savedData = localStorage.getItem("gameData");
+        if (savedData) {
+          try {
+            const data = JSON.parse(savedData);
+            coins = Number(data.coins) || coins;
+            miningPower = Number(data.miningPower) || miningPower;
+            energy = Number(data.energy) || energy;
+            progress = Number(data.progress) || progress;
+            dropModalShown = data.dropModalShown || dropModalShown;
+            const shopItems = document.querySelectorAll(".shop-item");
+            if (data.shopItems && data.shopItems.length === shopItems.length) {
+              shopItems.forEach((item, idx) => {
+                item.setAttribute("data-cost", data.shopItems[idx].cost);
+                item.querySelector(".itemCost").innerText = data.shopItems[idx].cost;
+              });
+            }
+            document.getElementById("progressBar").style.width = progress + "%";
+            document.getElementById("progressText").innerText = "Прогрес: " + progress + "%";
+          } catch (e) {
+            console.error("Помилка завантаження збережених даних:", e);
+          }
+        }
+        
+        // Функція оновлення статистики та збереження даних
+        function updateStats() {
+          document.getElementById("balanceCoins").innerText = coins;
+          document.getElementById("statsCoins").innerText = coins;
+          document.getElementById("statsMiningPower").innerText = miningPower;
+          document.getElementById("energyDisplay").innerText = energy;
+          checkForDrop();
+          saveGame();
+        }
+        function saveGame() {
+          const shopItems = Array.from(document.querySelectorAll(".shop-item")).map((item) => ({
+            cost: item.getAttribute("data-cost")
+          }));
+          const gameData = { coins, miningPower, energy, progress, dropModalShown, shopItems };
+          localStorage.setItem("gameData", JSON.stringify(gameData));
+        }
+        // Автоматичне збереження кожні 10 секунд та перед закриттям сторінки
+        setInterval(saveGame, 10000);
+        window.addEventListener("beforeunload", saveGame);
+        
+        // Обробка вкладок
+        const tabButtons = document.querySelectorAll(".tab-btn");
+        const tabContents = document.querySelectorAll(".tab-content");
+        tabButtons.forEach((btn) => {
+          btn.addEventListener("click", function () {
+            tabButtons.forEach((b) => b.classList.remove("active"));
+            tabContents.forEach((c) => c.classList.remove("active"));
+            this.classList.add("active");
+            const tabId = this.getAttribute("data-tab");
+            document.getElementById(tabId).classList.add("active");
+            document.getElementById("balanceDisplay").style.display = tabId === "main" ? "block" : "none";
+          });
+        });
+        
+        // Прогрес-бар (завдання)
+        document.getElementById("progressBtn").addEventListener("click", function () {
+          progress = Math.min(progress + 10, 100);
+          document.getElementById("progressBar").style.width = progress + "%";
+          document.getElementById("progressText").innerText = "Прогрес: " + progress + "%";
+          if (progress === 100) {
+            alert("Новий рівень відкрито!");
+            progress = 0;
+            document.getElementById("progressBar").style.width = "0%";
+            document.getElementById("progressText").innerText = "Прогрес: 0%";
+          }
+          saveGame();
+        });
+        
+        // Матричний ефект у canvas
+        const circleCanvas = document.getElementById("circleCanvas");
+        const ctx = circleCanvas.getContext("2d");
+        const circleFontSize = 16;
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()-=+{}[]";
+        const columns = Math.floor(circleCanvas.width / circleFontSize);
+        const drops = Array(columns).fill(1);
+        setInterval(function draw() {
+          ctx.fillStyle = "rgba(0,0,0,0.1)";
+          ctx.fillRect(0, 0, circleCanvas.width, circleCanvas.height);
+          ctx.fillStyle = "#9b59b6";
+          ctx.font = circleFontSize + "px monospace";
+          for (let i = 0; i < columns; i++) {
+            const text = letters.charAt(Math.floor(Math.random() * letters.length));
+            ctx.fillText(text, i * circleFontSize, drops[i] * circleFontSize);
+            if (drops[i] * circleFontSize > circleCanvas.height && Math.random() > 0.975) {
+              drops[i] = 0;
+            }
+            drops[i]++;
+          }
+        }, 50);
+        
+        // Майнінг: натискання на круг
+        document.getElementById("tapCircle").addEventListener("click", function () {
+          const now = Date.now();
+          if (now - lastTapTime < 500) return;
+          if (energy < 1) {
+            alert("Недостатньо енергії!");
+            return;
+          }
+          lastTapTime = now;
+          energy--;
+          coins += miningPower;
+          updateStats();
+        });
+        
+        // Відновлення енергії
+        setInterval(function () {
+          if (energy < maxEnergy) {
+            energy++;
+            updateStats();
+          }
+        }, energyRegenInterval);
+        
+        // Покупки в магазині (з ефектом shake при недостатньому балансі)
+        document.querySelectorAll(".buyItemBtn").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const item = this.closest(".shop-item");
+            const cost = parseInt(item.getAttribute("data-cost"));
+            const power = parseInt(item.getAttribute("data-power"));
+            if (coins >= cost) {
+              coins -= cost;
+              miningPower += power;
+              const newCost = Math.floor(cost * 1.8);
+              item.setAttribute("data-cost", newCost);
+              item.querySelector(".itemCost").innerText = newCost;
+              updateStats();
+            } else {
+              item.style.animation = "shake 0.3s";
+              setTimeout(() => (item.style.animation = ""), 300);
+            }
+          });
+        });
+        
+        // Промокоди
+        const promoCodes = {
+          "6ZWOYE84": { bonus: 43548, used: false },
+          "KNTFCCXI": { bonus: 8412, used: false },
+          "B9PJSECN": { bonus: 19140, used: false },
+          "VZ7G4JND": { bonus: 15530, used: false },
+          "7H0Y9XQK": { bonus: 29890, used: false },
+          "5R8DG52K": { bonus: 2720, used: false },
+          "F7HT3SYB": { bonus: 36940, used: false },
+          "D9A5VY6E": { bonus: 16724, used: false },
+          "R6PXLZ8S": { bonus: 26853, used: false }
+        };
+        document.getElementById("promoBtn").addEventListener("click", function () {
+          const code = document.getElementById("promoInput").value.trim().toUpperCase();
+          const msgDiv = document.getElementById("promoMessage");
+          if (!code) {
+            msgDiv.innerText = "Введіть промокод.";
+            return;
+          }
+          if (promoCodes.hasOwnProperty(code)) {
+            if (!promoCodes[code].used) {
+              coins += promoCodes[code].bonus;
+              promoCodes[code].used = true;
+              msgDiv.innerText =
+                "Промокод активовано! Ви отримали " +
+                promoCodes[code].bonus +
+                " DEXP.";
+              updateStats();
+            } else {
+              msgDiv.innerText = "Цей промокод вже використано.";
+            }
+          } else {
+            msgDiv.innerText = "Невірний промокод.";
+          }
+          document.getElementById("promoInput").value = "";
+        });
+        
+        // Перевірка для показу модального вікна (дроп)
+        function checkForDrop() {
+          if (coins >= 100000 && !dropModalShown) {
+            dropModalShown = true;
+            document.getElementById("dropModal").style.display = "flex";
+          }
+        }
+        
+        // Обробка модального вікна
+        document.getElementById("closeDropModal").addEventListener("click", function () {
+          document.getElementById("dropModal").style.display = "none";
+          saveGame();
+        });
+        
+        updateStats();
+        
+        // Telegram Mini Apps інтеграція
+        if (window.Telegram && window.Telegram.WebApp) {
+          window.Telegram.WebApp.ready();
+          if (window.Telegram.WebApp.initDataUnsafe) {
+            const user = window.Telegram.WebApp.initDataUnsafe.user;
+            if (user) {
+              const userInfoDiv = document.createElement("div");
+              userInfoDiv.style.position = "fixed";
+              userInfoDiv.style.top = "10px";
+              userInfoDiv.style.right = "140px";
+              userInfoDiv.style.background = "rgba(0,0,0,0.6)";
+              userInfoDiv.style.padding = "10px";
+              userInfoDiv.style.borderRadius = "10px";
+              userInfoDiv.style.fontSize = "16px";
+              userInfoDiv.style.boxShadow = "0 0 10px rgba(155,89,182,0.7)";
+              userInfoDiv.innerText = `Привіт, ${user.first_name}`;
+              document.body.appendChild(userInfoDiv);
+            }
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
