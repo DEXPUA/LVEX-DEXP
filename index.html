@@ -3,11 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>dexp </title>
+    <title>dexp</title>
     <!-- Telegram Web Apps API для інтеграції в Telegram Mini Apps -->
     <script async src="https://telegram.org/js/telegram-web-app.js"></script>
     <!-- Підключення шрифту Orbitron для кіберпанк стилю -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap"
+      rel="stylesheet"
+    />
     <style>
       /* Загальні стилі */
       * {
@@ -32,17 +35,15 @@
         height: 100%;
         overflow-y: auto;
       }
-      /* Баланс та енергія */
+      /* Баланс та енергія (переміщено під круг) */
       #balanceDisplay {
-        position: fixed;
-        top: 10px;
-        left: 10px;
         background: rgba(0, 0, 0, 0.6);
         padding: 10px 15px;
         border-radius: 10px;
         font-size: 18px;
         box-shadow: 0 0 10px rgba(155, 89, 182, 0.7);
-        z-index: 3;
+        margin-top: 20px;
+        text-align: center;
       }
       /* 3D Атом */
       #atom {
@@ -264,10 +265,18 @@
       }
       /* Shake-ефект для невдалої покупки */
       @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        50% { transform: translateX(5px); }
-        75% { transform: translateX(-5px); }
+        0%, 100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-5px);
+        }
+        50% {
+          transform: translateX(5px);
+        }
+        75% {
+          transform: translateX(-5px);
+        }
       }
       /* Промокоди */
       #promoSection {
@@ -364,11 +373,6 @@
         <div class="orbit orbit3"><div class="electron"></div></div>
       </div>
     </div>
-    <!-- Баланс та енергія -->
-    <div id="balanceDisplay">
-      Баланс: <span id="balanceCoins">0</span> DEXP<br />
-      Енергія: <span id="energyDisplay">100</span>/100
-    </div>
     <!-- Контейнер контенту -->
     <div class="container">
       <!-- Головна вкладка -->
@@ -376,6 +380,11 @@
         <div id="tapCircle" tabindex="0">
           <canvas id="circleCanvas" width="300" height="300"></canvas>
           <div class="dexpText">dexp</div>
+        </div>
+        <!-- Баланс та енергія (переміщено під круг) -->
+        <div id="balanceDisplay">
+          Баланс: <span id="balanceCoins">0</span> DEXP<br />
+          Енергія: <span id="energyDisplay">100</span>/100
         </div>
         <p style="text-align:center; font-size:16px; margin-top:10px;">
           (натисни на круг для майнінгу)
@@ -607,7 +616,7 @@
           });
         });
         
-        // Промокоди
+                        // Промокоди
         const promoCodes = {
           "6ZWOYE84": { bonus: 43548, used: false },
           "KNTFCCXI": { bonus: 8412, used: false },
