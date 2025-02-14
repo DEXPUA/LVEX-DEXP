@@ -6,6 +6,10 @@
     <title>dexp</title>
     <!-- Telegram Web Apps API для інтеграції в Telegram Mini Apps -->
     <script async src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- TON Connect SDK (placeholder – замініть на актуальне посилання) -->
+    <script src="https://ton.org/sdk/ton-connect.js"></script>
+    <!-- Telegram Mini Apps Analytics SDK (placeholder – замініть на актуальне посилання) -->
+    <script src="https://telegram.org/js/telegram-mini-app-analytics.js"></script>
     <!-- Підключення шрифту Orbitron для кіберпанк стилю -->
     <link
       href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap"
@@ -293,6 +297,55 @@
       #promoBtn {
         margin-left: 10px;
       }
+      /* Модальне вікно для Terms & Conditions */
+      #termsModal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        z-index: 5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #termsModal .modal-content {
+        background: #1a001a;
+        padding: 20px;
+        border: 2px solid #9b59b6;
+        border-radius: 10px;
+        max-width: 90%;
+        text-align: center;
+      }
+      #termsModal h2 {
+        margin-top: 0;
+      }
+      /* Модальне вікно для дропу */
+      #dropModal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 4;
+        align-items: center;
+        justify-content: center;
+      }
+      #dropModal > div {
+        background: #1a001a;
+        padding: 20px;
+        border: 2px solid #9b59b6;
+        border-radius: 10px;
+        text-align: center;
+        max-width: 90%;
+      }
+      #dropModal a {
+        color: inherit;
+        text-decoration: none;
+      }
       /* Responsive design */
       @media (max-width: 768px) {
         #tapCircle {
@@ -336,34 +389,26 @@
           padding: 4px 6px;
         }
       }
-      /* Модальне вікно для дропу */
-      #dropModal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.8);
-        z-index: 4;
-        align-items: center;
-        justify-content: center;
-      }
-      #dropModal > div {
-        background: #1a001a;
-        padding: 20px;
-        border: 2px solid #9b59b6;
-        border-radius: 10px;
-        text-align: center;
-        max-width: 90%;
-      }
-      #dropModal a {
-        color: inherit;
-        text-decoration: none;
-      }
     </style>
   </head>
   <body>
+    <!-- Модальне вікно для Terms & Conditions -->
+    <div id="termsModal">
+      <div class="modal-content">
+        <h2>Terms and Conditions</h2>
+        <p>
+          By submitting a new app, you confirm that you have read and agreed to the
+          Terms and Conditions of the Telegram Apps Center.
+        </p>
+        <p>Please ensure that your app complies with all guidelines, including the following:</p>
+        <ul>
+          <li>App exclusively uses the TON Blockchain;</li>
+          <li>App interfaces with cryptocurrency wallets with the TON Connect SDK;</li>
+          <li>App has integrated Telegram Mini Apps Analytics SDK.</li>
+        </ul>
+        <button id="agreeTerms" class="btn">I Agree</button>
+      </div>
+    </div>
     <!-- 3D Атом -->
     <div id="atom">
       <div class="atom-body">
@@ -470,6 +515,13 @@
     </div>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
+        // Показати модальне вікно з Terms & Conditions до початку роботи додатку
+        const termsModal = document.getElementById("termsModal");
+        const agreeTermsBtn = document.getElementById("agreeTerms");
+        agreeTermsBtn.addEventListener("click", function () {
+          termsModal.style.display = "none";
+        });
+        
         // Головні змінні гри
         let coins = 0,
           miningPower = 1,
@@ -616,7 +668,7 @@
           });
         });
         
-                        // Промокоди
+        // Промокоди
         const promoCodes = {
           "6ZWOYE84": { bonus: 43548, used: false },
           "KNTFCCXI": { bonus: 8412, used: false },
@@ -661,7 +713,7 @@
           }
         }
         
-        // Обробка модального вікна
+        // Обробка модального вікна для дропу
         document.getElementById("closeDropModal").addEventListener("click", function () {
           document.getElementById("dropModal").style.display = "none";
           saveGame();
