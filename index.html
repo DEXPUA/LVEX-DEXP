@@ -828,14 +828,6 @@ document.addEventListener("DOMContentLoaded", function () {
     localStorage.setItem("gameLanguage", currentLanguage);
   });
   
-  // Приклад кнопки для анімаційного перемикання мови
-  document.getElementById("animateLangBtn").addEventListener("click", function() {
-    const select = document.getElementById("langSelect");
-    currentLanguage = (select.value === "uk") ? "en" : "uk";
-    select.value = currentLanguage;
-    setLanguage(currentLanguage);
-    localStorage.setItem("gameLanguage", currentLanguage);
-  });
   
   // --- Виклик оновлення даних для початкового відображення ---
   updateStats();
