@@ -460,9 +460,9 @@
         
         // Матричний ефект в canvas
         const circleCanvas = document.getElementById("circleCanvas");
-        const ctx = circleCanvas.getContext("2d");
+        const ctx = circleCanvas.getContext("3d");
         const circleFontSize = 16;
-        const letters = "DEXP()-=+{}[]";
+        const letters = "DEXP";
         const columns = Math.floor(circleCanvas.width / circleFontSize);
         const drops = Array(columns).fill(1);
         setInterval(function draw() {
