@@ -432,18 +432,27 @@
         setInterval(saveGame, 10000);
         window.addEventListener("beforeunload", saveGame);
         
-        // Основні вкладки
-        const tabButtons = document.querySelectorAll(".tab-btn");
-        const tabContents = document.querySelectorAll(".tab-content");
-        tabButtons.forEach(btn => {
-          btn.addEventListener("click", function () {
-            tabButtons.forEach(b => b.classList.remove("active"));
-            tabContents.forEach(c => c.classList.remove("active"));
-            this.classList.add("active");
-            const tabId = this.getAttribute("data-tab");
-            document.getElementById(tabId).classList.add("active");
-          });
-        });
+        document.addEventListener("DOMContentLoaded", () => {
+  const tabButtons = document.querySelectorAll(".tab-btn");
+  const tabContents = document.querySelectorAll(".tab-content");
+
+  const clearActiveStates = () => {
+    tabButtons.forEach(btn => btn.classList.remove("active"));
+    tabContents.forEach(content => content.classList.remove("active"));
+  };
+
+  tabButtons.forEach(button => {
+    button.addEventListener("click", () => {
+      clearActiveStates();
+      button.classList.add("active");
+      const tabId = button.getAttribute("data-tab");
+      const activeContent = document.getElementById(tabId);
+      if (activeContent) {
+        activeContent.classList.add("active");
+      }
+    });
+  });
+});
         
         // Вкладки магазину
         const shopTabButtons = document.querySelectorAll(".shop-tab-btn");
@@ -460,9 +469,9 @@
         
         // Матричний ефект в canvas
         const circleCanvas = document.getElementById("circleCanvas");
-        const ctx = circleCanvas.getContext("3d");
+        const ctx = circleCanvas.getContext("2d");
         const circleFontSize = 16;
-        const letters = "DEXP";
+        const letters = "JEVEJCBSJXKO;"DEXP";
         const columns = Math.floor(circleCanvas.width / circleFontSize);
         const drops = Array(columns).fill(1);
         setInterval(function draw() {
