@@ -373,74 +373,73 @@
     </div>
 
     <!-- Модальне вікно для дропу -->
-    <div id="dropModal">
-      <div>
-        <h2 data-translate="drop.heading">Вітаємо!</h2>
-        <p data-translate="drop.message">
-          Ви досягли 100000 DEXP. Зв’яжіться з адміністрацією для отримання дропу.
-        </p>
-        <button class="btn" id="dropButton">
-          <a href="https://t.me/DELXPUA" target="_blank" data-translate="drop.getDrop">Отримати дроп</a>
-        </button>
-        <br />
-        <button class="btn" id="closeDropModal" data-translate="drop.close">Закрити</button>
-      </div>
-    </div>
+<div id="dropModal" style="display: none;">
+  <div>
+    <h2 data-translate="drop.heading">Вітаємо!</h2>
+    <p data-translate="drop.message">
+      Ви досягли 100000 DEXP. Зв’яжіться з адміністрацією для отримання дропу.
+    </p>
+    <button class="btn" id="dropButton">
+      <a href="https://t.me/DELXPUA" target="_blank" data-translate="drop.getDrop">Отримати дроп</a>
+    </button>
+    <br />
+    <button class="btn" id="closeDropModal" data-translate="drop.close">Закрити</button>
+  </div>
+</div>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        // Головні змінні
-        let coins = 0, miningPower = 1, energy = 100, dropModalShown = false;
-        const maxEnergy = 100;
-        const energyRegenInterval = 10000; // 10 секунд
-        let lastTapTime = 0;
-        
-        // Завантаження з localStorage
-        const savedData = localStorage.getItem("gameData");
-        if (savedData) {
-          try {
-            const data = JSON.parse(savedData);
-            coins = Number(data.coins) || coins;
-            miningPower = Number(data.miningPower) || miningPower;
-            energy = Number(data.energy) || energy;
-            dropModalShown = data.dropModalShown || dropModalShown;
-            const shopItems = document.querySelectorAll(".shop-item");
-            if (data.shopItems && data.shopItems.length === shopItems.length) {
-              shopItems.forEach((item, idx) => {
-                item.setAttribute("data-cost", data.shopItems[idx].cost);
-                item.querySelector(".itemCost").innerText = data.shopItems[idx].cost;
-              });
-            }
-          } catch (e) {
-            console.error("Помилка завантаження збережених даних:", e);
-          }
-        }
-        
-        function updateStats() {
-          document.getElementById("balanceCoins").innerText = coins;
-          document.getElementById("energyDisplay").innerText = energy;
-          checkForDrop();
-          saveGame();
-        }
-        function saveGame() {
-          const shopItems = Array.from(document.querySelectorAll(".shop-item")).map(item => ({
-            cost: item.getAttribute("data-cost")
-          }));
-          const gameData = { coins, miningPower, energy, dropModalShown, shopItems };
-          localStorage.setItem("gameData", JSON.stringify(gameData));
-        }
-        setInterval(saveGame, 10000);
-        window.addEventListener("beforeunload", saveGame);
-        
-        document.addEventListener("DOMContentLoaded", () => {
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Головні змінні
+  let coins = 0, miningPower = 1, energy = 100, dropModalShown = false;
+  const maxEnergy = 100;
+  const energyRegenInterval = 10000; // 10 секунд
+  let lastTapTime = 0;
+
+  // Завантаження з localStorage
+  const savedData = localStorage.getItem("gameData");
+  if (savedData) {
+    try {
+      const data = JSON.parse(savedData);
+      coins = Number(data.coins) || coins;
+      miningPower = Number(data.miningPower) || miningPower;
+      energy = Number(data.energy) || energy;
+      dropModalShown = data.dropModalShown || dropModalShown;
+      const shopItems = document.querySelectorAll(".shop-item");
+      if (data.shopItems && data.shopItems.length === shopItems.length) {
+        shopItems.forEach((item, idx) => {
+          item.setAttribute("data-cost", data.shopItems[idx].cost);
+          item.querySelector(".itemCost").innerText = data.shopItems[idx].cost;
+        });
+      }
+    } catch (e) {
+      console.error("Помилка завантаження збережених даних:", e);
+    }
+  }
+
+  // Функції оновлення та збереження
+  function updateStats() {
+    document.getElementById("balanceCoins").innerText = coins;
+    document.getElementById("energyDisplay").innerText = energy;
+    checkForDrop();
+    saveGame();
+  }
+  function saveGame() {
+    const shopItems = Array.from(document.querySelectorAll(".shop-item")).map(item => ({
+      cost: item.getAttribute("data-cost")
+    }));
+    const gameData = { coins, miningPower, energy, dropModalShown, shopItems };
+    localStorage.setItem("gameData", JSON.stringify(gameData));
+  }
+  setInterval(saveGame, 10000);
+  window.addEventListener("beforeunload", saveGame);
+
+  // Перемикання вкладок
   const tabButtons = document.querySelectorAll(".tab-btn");
   const tabContents = document.querySelectorAll(".tab-content");
-
   const clearActiveStates = () => {
     tabButtons.forEach(btn => btn.classList.remove("active"));
     tabContents.forEach(content => content.classList.remove("active"));
   };
-
   tabButtons.forEach(button => {
     button.addEventListener("click", () => {
       clearActiveStates();
@@ -452,341 +451,175 @@
       }
     });
   });
-});
-        
-        // Вкладки магазину
-        const shopTabButtons = document.querySelectorAll(".shop-tab-btn");
-        const shopTabContents = document.querySelectorAll(".shop-tab-content");
-        shopTabButtons.forEach(btn => {
-          btn.addEventListener("click", function () {
-            shopTabButtons.forEach(b => b.classList.remove("active"));
-            shopTabContents.forEach(c => c.classList.remove("active"));
-            this.classList.add("active");
-            const tabId = this.getAttribute("data-tab");
-            document.getElementById(tabId).classList.add("active");
-          });
-        });
-        
-        // Матричний ефект в canvas
-        const circleCanvas = document.getElementById("circleCanvas");
-        const ctx = circleCanvas.getContext("2d");
-        const circleFontSize = 16;
-        const letters = "JEVEJCBSJXKO;"DEXP";
-        const columns = Math.floor(circleCanvas.width / circleFontSize);
-        const drops = Array(columns).fill(1);
-        setInterval(function draw() {
-          ctx.fillStyle = "rgba(0,0,0,0.1)";
-          ctx.fillRect(0, 0, circleCanvas.width, circleCanvas.height);
-          ctx.fillStyle = "#9b59b6";
-          ctx.font = circleFontSize + "px monospace";
-          for (let i = 0; i < columns; i++) {
-            const text = letters.charAt(Math.floor(Math.random() * letters.length));
-            ctx.fillText(text, i * circleFontSize, drops[i] * circleFontSize);
-            if (drops[i] * circleFontSize > circleCanvas.height && Math.random() > 0.975) {
-              drops[i] = 0;
-            }
-            drops[i]++;
-          }
-        }, 50);
-        
-        // Майнінг: натискання на круг
-        document.getElementById("tapCircle").addEventListener("click", function () {
-          const now = Date.now();
-          if (now - lastTapTime < 500) return;
-          if (energy < 1) {
-            alert("Недостатньо енергії!");
-            return;
-          }
-          lastTapTime = now;
-          energy--;
-          coins += miningPower;
+
+  // Вкладки магазину
+  const shopTabButtons = document.querySelectorAll(".shop-tab-btn");
+  const shopTabContents = document.querySelectorAll(".shop-tab-content");
+  shopTabButtons.forEach(btn => {
+    btn.addEventListener("click", function () {
+      shopTabButtons.forEach(b => b.classList.remove("active"));
+      shopTabContents.forEach(c => c.classList.remove("active"));
+      this.classList.add("active");
+      const tabId = this.getAttribute("data-tab");
+      document.getElementById(tabId).classList.add("active");
+    });
+  });
+
+  // Матричний ефект в canvas
+  const circleCanvas = document.getElementById("circleCanvas");
+  const ctx = circleCanvas.getContext("2d");
+  const circleFontSize = 16;
+  // Виправлено: правильно оформлений рядок із символами
+  const letters = "JEVEJCBSJXKO;DEXP";
+  const columns = Math.floor(circleCanvas.width / circleFontSize);
+  const drops = Array(columns).fill(1);
+  setInterval(function draw() {
+    ctx.fillStyle = "rgba(0,0,0,0.1)";
+    ctx.fillRect(0, 0, circleCanvas.width, circleCanvas.height);
+    ctx.fillStyle = "#9b59b6";
+    ctx.font = circleFontSize + "px monospace";
+    for (let i = 0; i < columns; i++) {
+      const text = letters.charAt(Math.floor(Math.random() * letters.length));
+      ctx.fillText(text, i * circleFontSize, drops[i] * circleFontSize);
+      if (drops[i] * circleFontSize > circleCanvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+      drops[i]++;
+    }
+  }, 50);
+
+  // Майнінг: натискання на круг
+  document.getElementById("tapCircle").addEventListener("click", function () {
+    const now = Date.now();
+    if (now - lastTapTime < 500) return;
+    if (energy < 1) {
+      alert("Недостатньо енергії!");
+      return;
+    }
+    lastTapTime = now;
+    energy--;
+    coins += miningPower;
+    updateStats();
+  });
+
+  // Відновлення енергії
+  setInterval(function () {
+    if (energy < maxEnergy) {
+      energy++;
+      updateStats();
+    }
+  }, energyRegenInterval);
+
+  // Покупки в магазині
+  document.querySelectorAll(".buyItemBtn").forEach(btn => {
+    btn.addEventListener("click", function () {
+      const item = this.closest(".shop-item");
+      const cost = parseInt(item.getAttribute("data-cost"));
+      if (!item.hasAttribute("data-energy")) {
+        if (coins >= cost) {
+          coins -= cost;
+          miningPower += parseInt(item.getAttribute("data-power"));
+          const newCost = Math.floor(cost * 1.8);
+          item.setAttribute("data-cost", newCost);
+          item.querySelector(".itemCost").innerText = newCost;
           updateStats();
-        });
-        
-        // Відновлення енергії
-        setInterval(function () {
-          if (energy < maxEnergy) {
-            energy++;
-            updateStats();
-          }
-        }, energyRegenInterval);
-        
-        // Покупки в магазині
-        document.querySelectorAll(".buyItemBtn").forEach(btn => {
-          btn.addEventListener("click", function () {
-            const item = this.closest(".shop-item");
-            const cost = parseInt(item.getAttribute("data-cost"));
-            if (!item.hasAttribute("data-energy")) {
-              if (coins >= cost) {
-                coins -= cost;
-                miningPower += parseInt(item.getAttribute("data-power"));
-                const newCost = Math.floor(cost * 1.8);
-                item.setAttribute("data-cost", newCost);
-                item.querySelector(".itemCost").innerText = newCost;
-                updateStats();
-              } else {
-                item.style.animation = "shake 0.3s";
-                setTimeout(() => (item.style.animation = ""), 300);
-              }
-            } else {
-              if (coins >= cost) {
-                coins -= cost;
-                energy = Math.min(energy + 50, maxEnergy);
-                updateStats();
-              } else {
-                item.style.animation = "shake 0.3s";
-                setTimeout(() => (item.style.animation = ""), 300);
-              }
-            }
-          });
-        });
-        
-        // Секретний артефакт
-        let secretClickCount = 0;
-        document.getElementById("energyShop").addEventListener("click", function () {
-          secretClickCount++;
-          if (secretClickCount >= 5) {
-            const secretItem = document.querySelector(".secret-item");
-            if (secretItem.style.display === "none") {
-              secretItem.style.display = "block";
-              alert("Секретний артефакт відкрито!");
-            }
-          }
-        });
-        document.querySelector(".secretItemBtn").addEventListener("click", function(){
-          coins += 1000;
-          updateStats();
-          alert("Ви отримали 1000 DEXP!");
-          this.closest(".secret-item").style.display = "none";
-        });
-        
-        // Промокоди
-        const promoCodes = {
-          "6ZWOYE84": { bonus: 3000, used: false },
-          "KNTFCCXI": { bonus: 8412, used: false },
-          "B9PJSECN": { bonus: 19140, used: false },
-          "VZ7G4JND": { bonus: 15530, used: false },
-          "7H0Y9XQK": { bonus: 29890, used: false },
-          "5R8DG52K": { bonus: 2720, used: false },
-          "F7HT3SYB": { bonus: 36940, used: false },
-          "D9A5VY6E": { bonus: 16724, used: false },
-          "R6PXLZ8S": { bonus: 26853, used: false }
-        };
-        document.getElementById("promoBtn").addEventListener("click", function () {
-          const code = document.getElementById("promoInput").value.trim().toUpperCase();
-          const msgDiv = document.getElementById("promoMessage");
-          if (!code) { msgDiv.innerText = "Введіть промокод."; return; }
-          if (promoCodes.hasOwnProperty(code)) {
-            if (!promoCodes[code].used) {
-              coins += promoCodes[code].bonus;
-              promoCodes[code].used = true;
-              msgDiv.innerText = "Промокод активовано! Ви отримали " + promoCodes[code].bonus + " DEXP.";
-              updateStats();
-            } else { msgDiv.innerText = "Цей промокод вже використано."; }
-          } else { msgDiv.innerText = "Невірний промокод."; }
-          document.getElementById("promoInput").value = "";
-        });
-        
-        // Перевірка для показу модального вікна (дроп)
-        function checkForDrop() {
-          if (coins >= 100000 && !dropModalShown) {
-            dropModalShown = true;
-            document.getElementById("dropModal").style.display = "flex";
-          }
+        } else {
+          item.style.animation = "shake 0.3s";
+          setTimeout(() => (item.style.animation = ""), 300);
         }
-        document.getElementById("closeDropModal").addEventListener("click", function () {
-          document.getElementById("dropModal").style.display = "none";
-          saveGame();
-        });
-        
+      } else {
+        if (coins >= cost) {
+          coins -= cost;
+          energy = Math.min(energy + 50, maxEnergy);
+          updateStats();
+        } else {
+          item.style.animation = "shake 0.3s";
+          setTimeout(() => (item.style.animation = ""), 300);
+        }
+      }
+    });
+  });
+
+  // Секретний артефакт
+  let secretClickCount = 0;
+  document.getElementById("energyShop").addEventListener("click", function () {
+    secretClickCount++;
+    if (secretClickCount >= 5) {
+      const secretItem = document.querySelector(".secret-item");
+      if (secretItem.style.display === "none") {
+        secretItem.style.display = "block";
+        alert("Секретний артефакт відкрито!");
+      }
+    }
+  });
+  document.querySelector(".secretItemBtn").addEventListener("click", function(){
+    coins += 1000;
+    updateStats();
+    alert("Ви отримали 1000 DEXP!");
+    this.closest(".secret-item").style.display = "none";
+  });
+
+  // Промокоди
+  const promoCodes = {
+    "6ZWOYE84": { bonus: 3000, used: false },
+    "KNTFCCXI": { bonus: 8412, used: false },
+    "B9PJSECN": { bonus: 19140, used: false },
+    "VZ7G4JND": { bonus: 15530, used: false },
+    "7H0Y9XQK": { bonus: 29890, used: false },
+    "5R8DG52K": { bonus: 2720, used: false },
+    "F7HT3SYB": { bonus: 36940, used: false },
+    "D9A5VY6E": { bonus: 16724, used: false },
+    "R6PXLZ8S": { bonus: 26853, used: false }
+  };
+  document.getElementById("promoBtn").addEventListener("click", function () {
+    const code = document.getElementById("promoInput").value.trim().toUpperCase();
+    const msgDiv = document.getElementById("promoMessage");
+    if (!code) { msgDiv.innerText = "Введіть промокод."; return; }
+    if (promoCodes.hasOwnProperty(code)) {
+      if (!promoCodes[code].used) {
+        coins += promoCodes[code].bonus;
+        promoCodes[code].used = true;
+        msgDiv.innerText = "Промокод активовано! Ви отримали " + promoCodes[code].bonus + " DEXP.";
         updateStats();
-        
-        // Telegram Mini Apps інтеграція
-        if (window.Telegram && window.Telegram.WebApp) {
-          window.Telegram.WebApp.ready();
-          if (window.Telegram.WebApp.initDataUnsafe) {
-            const user = window.Telegram.WebApp.initDataUnsafe.user;
-            if (user) {
-              const userInfoDiv = document.createElement("div");
-              userInfoDiv.style.position = "fixed";
-              userInfoDiv.style.top = "10px";
-              userInfoDiv.style.right = "140px";
-              userInfoDiv.style.background = "rgba(0,0,0,0.6)";
-              userInfoDiv.style.padding = "10px";
-              userInfoDiv.style.borderRadius = "10px";
-              userInfoDiv.style.fontSize = "16px";
-              userInfoDiv.style.boxShadow = "0 0 10px rgba(155,89,182,0.7)";
-              userInfoDiv.innerText = `Привіт, ${user.first_name}`;
-              document.body.appendChild(userInfoDiv);
-            }
-          }
-        }
-        
-        // Функціонал зміни мови (налаштування)
-        const translations = {
-          uk: {
-            "nav.main": "Головна",
-            "nav.tasks": "Завдання",
-            "nav.shop": "Магазин",
-            "nav.promo": "Промокоди",
-            "nav.settings": "Налаштування",
-            "tasks.heading": "Завдання",
-            "tasks.subscribeChannel": "Підписатись на канал",
-            "tasks.joinChat": "Приєднатися до чату",
-            "tasks.subscribeX": "Підписатися на X",
-            "shop.tapTab": "Тап",
-            "shop.energyTab": "Енергія",
-            "shop.tapHeading": "Покращення Тапа",
-            "shop.energyHeading": "Покупка Енергії",
-            "shop.item1.title": "Майнінг Ріг",
-            "shop.item1.desc": "Підвищує майнінг потужність на 1.",
-            "shop.item2.title": "Квантовий Процесор",
-            "shop.item2.desc": "Підвищує майнінг потужність на 5.",
-            "shop.item3.title": "Голографічний Сервер",
-            "shop.item3.desc": "Підвищує майнінг потужність на 20.",
-            "shop.item4.title": "Енергійний Заряд",
-            "shop.item4.desc": "Відновлює 50 одиниць енергії.",
-            "shop.secretItem.title": "Секретний Артефакт",
-            "shop.secretItem.desc": "Надає вам 1000 DEXP, якщо знайдете його.",
-            "shop.buyBtn": "Купити",
-            "shop.cost": "Вартість:",
-            "shop.secretItem.btn": "Активувати",
-            "promo.heading": "Промокоди",
-            "promo.inputPlaceholder": "Введіть промокод",
-            "promo.activateBtn": "Активувати",
-            "balance.balance": "Баланс:",
-            "balance.energy": "Енергія:",
-            "main.instruction": "(натисни на круг для майнінгу)",
-            "drop.heading": "Вітаємо!",
-            "drop.message": "Ви досягли 100000 DEXP. Зв’яжіться з адміністрацією для отримання дропу.",
-            "drop.getDrop": "Отримати дроп",
-            "drop.close": "Закрити",
-            "settings.heading": "Налаштування",
-            "settings.language": "Змінити мову:",
-            "settings.animateBtn": "Змінити мову з анімацією"
-          },
-          en: {
-            "nav.main": "Home",
-            "nav.tasks": "Tasks",
-            "nav.shop": "Shop",
-            "nav.promo": "Promo Codes",
-            "nav.settings": "Settings",
-            "tasks.heading": "Tasks",
-            "tasks.subscribeChannel": "Subscribe to Channel",
-            "tasks.joinChat": "Join Chat",
-            "tasks.subscribeX": "Subscribe to X",
-            "shop.tapTab": "Tap",
-            "shop.energyTab": "Energy",
-            "shop.tapHeading": "Tap Upgrades",
-            "shop.energyHeading": "Energy Purchase",
-            "shop.item1.title": "Mining Rig",
-            "shop.item1.desc": "Increases mining power by 1.",
-            "shop.item2.title": "Quantum Processor",
-            "shop.item2.desc": "Increases mining power by 5.",
-            "shop.item3.title": "Holographic Server",
-            "shop.item3.desc": "Increases mining power by 20.",
-            "shop.item4.title": "Energy Boost",
-            "shop.item4.desc": "Restores 50 energy units.",
-            "shop.secretItem.title": "Secret Artifact",
-            "shop.secretItem.desc": "Gives you 1000 DEXP if found.",
-            "shop.buyBtn": "Buy",
-            "shop.cost": "Cost:",
-            "shop.secretItem.btn": "Activate",
-            "promo.heading": "Promo Codes",
-            "promo.inputPlaceholder": "Enter promo code",
-            "promo.activateBtn": "Activate",
-            "balance.balance": "Balance:",
-            "balance.energy": "Energy:",
-            "main.instruction": "(tap the circle to mine)",
-            "drop.heading": "Congratulations!",
-            "drop.message": "You reached 100000 DEXP. Contact the admin for a drop.",
-            "drop.getDrop": "Get Drop",
-            "drop.close": "Close",
-            "settings.heading": "Settings",
-            "settings.language": "Change language:",
-            "settings.animateBtn": "Change language with animation"
-          }
-        };
-        function setLanguage(lang) {
-          document.querySelectorAll('[data-translate]').forEach(el => {
-            const key = el.getAttribute('data-translate');
-            if (translations[lang] && translations[lang][key]) {
-              el.innerText = translations[lang][key];
-            }
-          });
-          document.querySelectorAll('[data-translate-placeholder]').forEach(el => {
-            const key = el.getAttribute('data-translate-placeholder');
-            if (translations[lang] && translations[lang][key]) {
-              el.placeholder = translations[lang][key];
-            }
-          });
-        }
-        document.getElementById("langSelect").addEventListener("change", function() {
-          setLanguage(this.value);
-        });
-        document.getElementById("animateLangBtn").addEventListener("click", function() {
-          const select = document.getElementById("langSelect");
-          select.value = (select.value === "uk") ? "en" : "uk";
-          setLanguage(select.value);
-        });
-        setLanguage(document.getElementById("langSelect").value);
-      });
-    <!-- Вставте цей блок <script> у свій код (наприклад, перед закриваючим тегом </body>) -->
-    
-document.addEventListener("DOMContentLoaded", function () {
-  // --- Завантаження збережених даних гри ---
-  let coins = 0, miningPower = 1, energy = 100, dropModalShown = false;
-  const maxEnergy = 100, energyRegenInterval = 10000;
-  let lastTapTime = 0;
-  
-  // Спроба завантажити збережені дані
-  const savedData = localStorage.getItem("gameData");
-  if (savedData) {
-    try {
-      const data = JSON.parse(savedData);
-      coins = Number(data.coins) || coins;
-      miningPower = Number(data.miningPower) || miningPower;
-      energy = Number(data.energy) || energy;
-      dropModalShown = data.dropModalShown || dropModalShown;
-      // Якщо потрібне – відновіть і інші параметри (наприклад, магазин)
-    } catch (e) {
-      console.error("Помилка завантаження збережених даних:", e);
+      } else { msgDiv.innerText = "Цей промокод вже використано."; }
+    } else { msgDiv.innerText = "Невірний промокод."; }
+    document.getElementById("promoInput").value = "";
+  });
+
+  // Перевірка для показу модального вікна (дроп)
+  function checkForDrop() {
+    if (coins >= 100000 && !dropModalShown) {
+      dropModalShown = true;
+      document.getElementById("dropModal").style.display = "flex";
     }
   }
-  
-  // --- Завантаження збереженої мови ---
-  let currentLanguage = "uk";
-  const savedLang = localStorage.getItem("gameLanguage");
-  if (savedLang) {
-    currentLanguage = savedLang;
-    document.getElementById("langSelect").value = savedLang;
-  }
-  
-  // --- Функції оновлення і збереження ---
-  function updateStats() {
-    document.getElementById("balanceCoins").innerText = coins;
-    document.getElementById("energyDisplay").innerText = energy;
-    checkForDrop();
+  document.getElementById("closeDropModal").addEventListener("click", function () {
+    document.getElementById("dropModal").style.display = "none";
     saveGame();
+  });
+
+  // Telegram Mini Apps інтеграція
+  if (window.Telegram && window.Telegram.WebApp) {
+    window.Telegram.WebApp.ready();
+    if (window.Telegram.WebApp.initDataUnsafe) {
+      const user = window.Telegram.WebApp.initDataUnsafe.user;
+      if (user) {
+        const userInfoDiv = document.createElement("div");
+        userInfoDiv.style.position = "fixed";
+        userInfoDiv.style.top = "10px";
+        userInfoDiv.style.right = "140px";
+        userInfoDiv.style.background = "rgba(0,0,0,0.6)";
+        userInfoDiv.style.padding = "10px";
+        userInfoDiv.style.borderRadius = "10px";
+        userInfoDiv.style.fontSize = "16px";
+        userInfoDiv.style.boxShadow = "0 0 10px rgba(155,89,182,0.7)";
+        userInfoDiv.innerText = `Привіт, ${user.first_name}`;
+        document.body.appendChild(userInfoDiv);
+      }
+    }
   }
-  
-  function saveGame() {
-    const gameData = {
-      coins: coins,
-      miningPower: miningPower,
-      energy: energy,
-      dropModalShown: dropModalShown
-      // Можна додати інші параметри, які потрібно зберігати
-    };
-    localStorage.setItem("gameData", JSON.stringify(gameData));
-    localStorage.setItem("gameLanguage", currentLanguage);
-  }
-  
-  // Автозбереження кожні 10 секунд та перед закриттям сторінки
-  setInterval(saveGame, 10000);
-  window.addEventListener("beforeunload", saveGame);
-  
-  // --- Функціонал зміни мови ---
+
+  // Функціонал зміни мови (налаштування)
   const translations = {
     uk: {
       "nav.main": "Головна",
@@ -794,10 +627,40 @@ document.addEventListener("DOMContentLoaded", function () {
       "nav.shop": "Магазин",
       "nav.promo": "Промокоди",
       "nav.settings": "Налаштування",
+      "tasks.heading": "Завдання",
+      "tasks.subscribeChannel": "Підписатись на канал",
+      "tasks.joinChat": "Приєднатися до чату",
+      "tasks.subscribeX": "Підписатися на X",
+      "shop.tapTab": "Тап",
+      "shop.energyTab": "Енергія",
+      "shop.tapHeading": "Покращення Тапа",
+      "shop.energyHeading": "Покупка Енергії",
+      "shop.item1.title": "Майнінг Ріг",
+      "shop.item1.desc": "Підвищує майнінг потужність на 1.",
+      "shop.item2.title": "Квантовий Процесор",
+      "shop.item2.desc": "Підвищує майнінг потужність на 5.",
+      "shop.item3.title": "Голографічний Сервер",
+      "shop.item3.desc": "Підвищує майнінг потужність на 20.",
+      "shop.item4.title": "Енергійний Заряд",
+      "shop.item4.desc": "Відновлює 50 одиниць енергії.",
+      "shop.secretItem.title": "Секретний Артефакт",
+      "shop.secretItem.desc": "Надає вам 1000 DEXP, якщо знайдете його.",
+      "shop.buyBtn": "Купити",
+      "shop.cost": "Вартість:",
+      "shop.secretItem.btn": "Активувати",
+      "promo.heading": "Промокоди",
+      "promo.inputPlaceholder": "Введіть промокод",
+      "promo.activateBtn": "Активувати",
       "balance.balance": "Баланс:",
       "balance.energy": "Енергія:",
-      "main.instruction": "(натисни на круг для майнінгу)"
-      // Додайте інші переклади, які потрібні
+      "main.instruction": "(натисни на круг для майнінгу)",
+      "drop.heading": "Вітаємо!",
+      "drop.message": "Ви досягли 100000 DEXP. Зв’яжіться з адміністрацією для отримання дропу.",
+      "drop.getDrop": "Отримати дроп",
+      "drop.close": "Закрити",
+      "settings.heading": "Налаштування",
+      "settings.language": "Змінити мову:",
+      "settings.animateBtn": "Змінити мову з анімацією"
     },
     en: {
       "nav.main": "Home",
@@ -805,52 +668,77 @@ document.addEventListener("DOMContentLoaded", function () {
       "nav.shop": "Shop",
       "nav.promo": "Promo Codes",
       "nav.settings": "Settings",
+      "tasks.heading": "Tasks",
+      "tasks.subscribeChannel": "Subscribe to Channel",
+      "tasks.joinChat": "Join Chat",
+      "tasks.subscribeX": "Subscribe to X",
+      "shop.tapTab": "Tap",
+      "shop.energyTab": "Energy",
+      "shop.tapHeading": "Tap Upgrades",
+      "shop.energyHeading": "Energy Purchase",
+      "shop.item1.title": "Mining Rig",
+      "shop.item1.desc": "Increases mining power by 1.",
+      "shop.item2.title": "Quantum Processor",
+      "shop.item2.desc": "Increases mining power by 5.",
+      "shop.item3.title": "Holographic Server",
+      "shop.item3.desc": "Increases mining power by 20.",
+      "shop.item4.title": "Energy Boost",
+      "shop.item4.desc": "Restores 50 energy units.",
+      "shop.secretItem.title": "Secret Artifact",
+      "shop.secretItem.desc": "Gives you 1000 DEXP if found.",
+      "shop.buyBtn": "Buy",
+      "shop.cost": "Cost:",
+      "shop.secretItem.btn": "Activate",
+      "promo.heading": "Promo Codes",
+      "promo.inputPlaceholder": "Enter promo code",
+      "promo.activateBtn": "Activate",
       "balance.balance": "Balance:",
       "balance.energy": "Energy:",
-      "main.instruction": "(tap the circle to mine)"
-      // Додайте інші переклади, які потрібні
+      "main.instruction": "(tap the circle to mine)",
+      "drop.heading": "Congratulations!",
+      "drop.message": "You reached 100000 DEXP. Contact the admin for a drop.",
+      "drop.getDrop": "Get Drop",
+      "drop.close": "Close",
+      "settings.heading": "Settings",
+      "settings.language": "Change language:",
+      "settings.animateBtn": "Change language with animation"
     }
   };
-  
+
   function setLanguage(lang) {
-    document.querySelectorAll("[data-translate]").forEach(el => {
-      const key = el.getAttribute("data-translate");
+    document.querySelectorAll('[data-translate]').forEach(el => {
+      const key = el.getAttribute('data-translate');
       if (translations[lang] && translations[lang][key]) {
         el.innerText = translations[lang][key];
       }
     });
-    document.querySelectorAll("[data-translate-placeholder]").forEach(el => {
-      const key = el.getAttribute("data-translate-placeholder");
+    document.querySelectorAll('[data-translate-placeholder]').forEach(el => {
+      const key = el.getAttribute('data-translate-placeholder');
       if (translations[lang] && translations[lang][key]) {
         el.placeholder = translations[lang][key];
       }
     });
   }
-  
-  // Встановлення мови при завантаженні
-  setLanguage(currentLanguage);
-  
-  // Обробка селектора мови
+
   document.getElementById("langSelect").addEventListener("change", function() {
-    currentLanguage = this.value;
-    setLanguage(currentLanguage);
-    localStorage.setItem("gameLanguage", currentLanguage);
+    setLanguage(this.value);
+    localStorage.setItem("gameLanguage", this.value);
   });
-  
-  
-  // --- Виклик оновлення даних для початкового відображення ---
+
+  document.getElementById("animateLangBtn").addEventListener("click", function() {
+    const select = document.getElementById("langSelect");
+    select.value = (select.value === "uk") ? "en" : "uk";
+    setLanguage(select.value);
+    localStorage.setItem("gameLanguage", select.value);
+  });
+
+  // Ініціалізація мови
+  const savedLang = localStorage.getItem("gameLanguage") || "uk";
+  document.getElementById("langSelect").value = savedLang;
+  setLanguage(savedLang);
+
   updateStats();
-  
-  // Функція перевірки для показу модального вікна дропу (якщо потрібно)
-  function checkForDrop() {
-    if (coins >= 100000 && !dropModalShown) {
-      dropModalShown = true;
-      document.getElementById("dropModal").style.display = "flex";
-    }
-  }
-  
-  // Інші частини вашого коду (майнінг, покупки, інше) повинні використовувати змінні coins, energy, miningPower тощо
 });
 </script>
-  </body>
+</body>
 </html>
