@@ -1,275 +1,191 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VELVET ELITE | Private Premium Club</title>
-    
-    <!-- Бібліотеки -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Шрифти -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>❤️ Для Надюшки ❤️</title>
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: { gold: '#D4AF37', dark: '#0A0A0A', card: '#111111' },
-                    fontFamily: { serif: ['Cinzel', 'serif'], sans: ['Montserrat', 'sans-serif'] }
-                }
-            }
-        }
-    </script>
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
 
-    <style>
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { 
-            background-color: #0A0A0A; 
-            color: #e5e5e5; 
-            font-family: 'Montserrat', sans-serif; 
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
-        .gold-text { 
-            background: linear-gradient(135deg, #D4AF37 0%, #F3E5AB 100%); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-        }
-        /* Непрозоре надійне меню */
-        .nav-solid {
-            background-color: #0A0A0A !important;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.4);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.8);
-        }
-        .btn-gold {
-            background: linear-gradient(135deg, #D4AF37 0%, #C5A028 100%);
-            color: #000;
-            font-weight: 700;
-            transition: all 0.3s ease;
-        }
-        .btn-gold:active { transform: scale(0.96); }
-        
-        .animate-fade { animation: fadeIn 0.4s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+body{
+    height:100vh;
+    overflow:hidden;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(-45deg,#ff0844,#ff5e7e,#ff8fab,#ffc2d1);
+    background-size:400% 400%;
+    animation:bg 12s ease infinite;
+}
 
-        /* Стилізація скроллбару */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #0A0A0A; }
-        ::-webkit-scrollbar-thumb { background: #D4AF37; }
-    </style>
+@keyframes bg{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+
+.card{
+    width:90%;
+    max-width:650px;
+    text-align:center;
+    background:rgba(255,255,255,0.12);
+    backdrop-filter:blur(15px);
+    border:1px solid rgba(255,255,255,0.3);
+    border-radius:30px;
+    padding:40px;
+    color:white;
+    box-shadow:0 0 50px rgba(255,255,255,.2);
+    animation:appear 2s ease;
+}
+
+@keyframes appear{
+    from{
+        opacity:0;
+        transform:scale(.8);
+    }
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
+}
+
+h1{
+    font-size:52px;
+    margin-bottom:20px;
+    animation:pulse 2s infinite;
+}
+
+@keyframes pulse{
+    0%,100%{transform:scale(1);}
+    50%{transform:scale(1.08);}
+}
+
+.message{
+    font-size:22px;
+    line-height:1.8;
+}
+
+button{
+    margin-top:30px;
+    padding:15px 35px;
+    border:none;
+    border-radius:50px;
+    background:white;
+    color:#ff2d55;
+    font-size:20px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+button:hover{
+    transform:scale(1.1);
+}
+
+.heart{
+    position:absolute;
+    bottom:-50px;
+    color:white;
+    animation:float linear forwards;
+    pointer-events:none;
+}
+
+@keyframes float{
+    from{
+        transform:translateY(0) rotate(0deg);
+        opacity:1;
+    }
+    to{
+        transform:translateY(-120vh) rotate(360deg);
+        opacity:0;
+    }
+}
+
+.glow{
+    position:absolute;
+    width:300px;
+    height:300px;
+    border-radius:50%;
+    background:rgba(255,255,255,.15);
+    filter:blur(60px);
+}
+
+.glow1{
+    top:-100px;
+    left:-100px;
+}
+
+.glow2{
+    bottom:-100px;
+    right:-100px;
+}
+
+#loveText{
+    margin-top:25px;
+    font-size:28px;
+    color:#fff;
+    font-weight:bold;
+}
+</style>
 </head>
 <body>
-    <div id="root"></div>
 
-    <script type="text/babel">
-        const { useState, useEffect } = React;
-        const TG_LINK = "https://t.me/wwxload";
+<div class="glow glow1"></div>
+<div class="glow glow2"></div>
 
-        const models = [
-            { 
-                id: 1, name: "Катерина", age: 20, city: "Рівне", h: 164, w: 54, b: 2.5, 
-                price: { h: "1800", n: "8000" }, 
-                photo: "https://i.ibb.co/bj1Hf4B9/image.jpg", 
-                verified: true,
-                about: "Елегантна супутниця для вишуканих вечорів та цікавих розмов."
-            },
-            { 
-                id: 2, name: "Ліза", age: 22, city: "Луцьк", h: 170, w: 56, b: 1.5, 
-                price: { h: "1600", n: "6500" }, 
-                photo: "https://i.ibb.co/wNGC996h/image.jpg", 
-                verified: true,
-                about: "Харизматична та відкрита. Створюю атмосферу затишку та легкості."
-            },
-            { 
-                id: 3, name: "Надія", age: 20, city: "Рівне", h: 162, w: 50, b: 3, 
-                price: { h: "2000", n: "10000" }, 
-                photo: "https://i.ibb.co/1GBsTzTw/image.jpg", 
-                verified: false,
-                about: "Ніжність та пристрасть в одному образі для поціновувачів естетики."
-            }
-        ];
+<div class="card">
 
-        const reviewsData = [
-            { name: "Олександр", text: "Все чітко. Катерина в реалі навіть краща, ніж на фото. Менеджеру дякую за оперативність." },
-            { name: "Andriy_K", text: "Спочатку сумнівався, бо зараз багато розводу в інеті. Але тут все чесно. Зустріч пройшла на рівні." },
-            { name: "Anon", text: "Ліза — це просто космос. Дуже вихована дівчина, приємно просто поспілкуватись за вечерею." },
-            { name: "Влад", text: "Брав супровід на захід. Все пройшло ідеально, дрес-код витримано. Рекомендую." },
-            { name: "D.M.", text: "Фото відповідають дійсності, що зараз рідкість. Сервіс коштує своїх грошей." },
-            { name: "Сергій", text: "Надія дуже мила. Трохи запізнилась через пробки, але менеджер попередив. В цілому — супер." },
-            { name: "Max", text: "Найкращий вибір у Рівному. Конфіденційність на першому місці, для мене це було головне." },
-            { name: "Юрій", text: "Відгуки не брешуть. Дівчата доглянуті, парфуми дорогі, спілкування легке." },
-            { name: "T.L.", text: "Приємно мати справу з професіоналами. Організували зустріч за годину." },
-            { name: "Ігор", text: "Був запит на специфічний типаж, менеджер підібрав варіанти, яких немає на сайті. Рівень!" },
-            { name: "Oleg", text: "Все гуд. Анонімно, швидко, якісно. Дякую за вечір." },
-            { name: "Артем", text: "Ліза топ! Дуже харизматична дівчина. Вечір пролетів як 5 хвилин." },
-            { name: "Pavel_R", text: "Чисто, акуратно, дівчата знають свою справу. Ніякого дискомфорту." },
-            { name: "Клієнт", text: "Раджу брати відразу на ніч, так набагато вигідніше і можна розслабитися." },
-            { name: "Dmitriy", text: "Дякую Velvet за якісний фільтр. Тільки топ рівень." }
-        ];
+<h1>❤️ Надюшка ❤️</h1>
 
-        const App = () => {
-            const [tab, setTab] = useState('home');
-            const [selectedModel, setSelectedModel] = useState(null);
-            const [menuOpen, setMenuOpen] = useState(false);
+<div class="message">
+Ти найпрекрасніша дівчина. 🌹<br><br>
 
-            useEffect(() => {
-                window.scrollTo(0, 0);
-            }, [tab]);
+Коли ти усміхаєшся — світ стає яскравішим.<br>
+Коли ти поруч — серце б'ється швидше. ❤️<br><br>
 
-            return (
-                <div className="min-h-screen flex flex-col bg-dark">
-                    
-                    {/* Header - Солідний і непрозорий */}
-                    <nav className="fixed top-0 left-0 w-full z-[100] px-6 py-5 flex justify-between items-center nav-solid">
-                        <div onClick={() => {setTab('home'); setMenuOpen(false);}} className="font-serif text-xl gold-text cursor-pointer tracking-[0.2em] font-bold">VELVET ELITE</div>
-                        <button onClick={() => setMenuOpen(!menuOpen)} className="p-2 flex flex-col gap-1.5">
-                            <div className={`w-6 h-0.5 bg-gold transition ${menuOpen ? 'rotate-45 translate-y-2' : ''}`}></div>
-                            <div className={`w-6 h-0.5 bg-gold ${menuOpen ? 'opacity-0' : ''}`}></div>
-                            <div className={`w-6 h-0.5 bg-gold transition ${menuOpen ? '-rotate-45 -translate-y-2' : ''}`}></div>
-                        </button>
-                    </nav>
+Дякую, що ти є.
+</div>
 
-                    {/* Меню на весь екран */}
-                    {menuOpen && (
-                        <div className="fixed inset-0 z-[95] bg-dark flex flex-col items-center justify-center gap-8 animate-fade">
-                            {['home', 'models', 'services', 'reviews', 'about'].map(t => (
-                                <button key={t} onClick={() => {setTab(t); setMenuOpen(false);}} className={`uppercase tracking-[0.3em] text-sm ${tab === t ? 'text-gold' : 'text-white'}`}>
-                                    {t === 'home' ? 'Головна' : t === 'models' ? 'Каталог' : t === 'services' ? 'Послуги' : t === 'reviews' ? 'Відгуки' : 'Про клуб'}
-                                </button>
-                            ))}
-                            <a href={TG_LINK} className="btn-gold px-10 py-3 text-[10px] uppercase mt-4">Написати нам</a>
-                        </div>
-                    )}
+<button onclick="showLove()">
+Натисни сюди ❤️
+</button>
 
-                    {/* Main Content */}
-                    <main className="flex-grow pt-28 pb-16 px-4 max-w-6xl mx-auto w-full">
-                        
-                        {tab === 'home' && (
-                            <div className="text-center py-20 animate-fade">
-                                <h1 className="font-serif text-5xl md:text-8xl gold-text mb-6 font-bold uppercase tracking-tighter">Velvet Elite</h1>
-                                <p className="text-zinc-500 tracking-[0.5em] uppercase text-[10px] md:text-xs mb-16 italic">Ексклюзивність у кожній деталі</p>
-                                <div className="flex flex-col md:flex-row gap-6 justify-center">
-                                    <button onClick={() => setTab('models')} className="btn-gold px-12 py-5 uppercase text-xs tracking-widest">Відкрити каталог</button>
-                                    <button onClick={() => setTab('about')} className="border border-gold text-gold px-12 py-5 uppercase text-xs tracking-widest hover:bg-gold/10">Наші цінності</button>
-                                </div>
-                            </div>
-                        )}
+<div id="loveText"></div>
 
-                        {tab === 'models' && (
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 animate-fade">
-                                {models.map(m => (
-                                    <div key={m.id} onClick={() => setSelectedModel(m)} className="bg-card border border-white/5 overflow-hidden cursor-pointer hover:border-gold/30 transition-all duration-500 group">
-                                        <div className="aspect-[3/4] overflow-hidden">
-                                            <img src={m.photo} className="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 group-hover:scale-105 transition duration-700" />
-                                        </div>
-                                        <div className="p-6">
-                                            <div className="flex justify-between items-center mb-2">
-                                                <h3 className="text-2xl font-serif text-white">{m.name}, {m.age}</h3>
-                                                {m.verified && <span className="text-[8px] bg-gold/10 text-gold border border-gold/50 px-2 py-0.5 rounded-sm">VERIFIED</span>}
-                                            </div>
-                                            <p className="text-zinc-500 text-[10px] uppercase tracking-widest">{m.city} • {m.h} см • {m.b} розмір</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
+</div>
 
-                        {tab === 'services' && (
-                            <div className="max-w-4xl mx-auto animate-fade">
-                                <h2 className="text-3xl font-serif text-gold text-center mb-16 uppercase tracking-[0.2em]">Наші Послуги</h2>
-                                <div className="grid md:grid-cols-2 gap-6">
-                                    {[
-                                        {t: "Класичний супровід", d: "Ідеально для вечірок, бізнес-зустрічей та ресторанів."},
-                                        {t: "Віртуальне спілкування", d: "Приватний контент та відеодзвінки в Telegram."},
-                                        {t: "Travel-супровід", d: "Спільні подорожі та відпочинок за кордоном."},
-                                        {t: "Private Events", d: "Організація закритого дозвілля під ключ."}
-                                    ].map((s, i) => (
-                                        <div key={i} className="p-10 bg-card border border-white/5 hover:border-gold/20 transition text-center">
-                                            <h3 className="text-gold mb-4 uppercase text-sm tracking-widest font-bold">{s.t}</h3>
-                                            <p className="text-zinc-500 text-xs leading-relaxed">{s.d}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
+<script>
 
-                        {tab === 'reviews' && (
-                            <div className="max-w-3xl mx-auto space-y-4 animate-fade">
-                                <h2 className="text-3xl font-serif text-gold text-center mb-16 uppercase tracking-[0.2em]">Відгуки резидентів</h2>
-                                <div className="grid gap-4">
-                                    {reviewsData.map((r, i) => (
-                                        <div key={i} className="p-6 bg-card border-l-2 border-gold/40 shadow-xl">
-                                            <div className="flex justify-between mb-2">
-                                                <span className="text-gold font-bold text-[10px] uppercase tracking-widest">{r.name}</span>
-                                                <span className="text-[9px] text-zinc-600 uppercase">Verified Visit</span>
-                                            </div>
-                                            <p className="text-zinc-400 text-xs italic leading-relaxed">"{r.text}"</p>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
+function showLove(){
+    document.getElementById("loveText").innerHTML =
+    "💖 Я тебе дуже сильно кохаю, Надюшка! 💖";
+}
 
-                        {tab === 'about' && (
-                            <div className="max-w-3xl mx-auto text-center py-10 animate-fade">
-                                <h2 className="text-3xl font-serif text-gold mb-12 uppercase tracking-[0.2em]">Про Клуб</h2>
-                                <div className="space-y-8 text-zinc-400 text-sm font-light leading-loose tracking-wide">
-                                    <p>Velvet Elite — це закрита спільнота для чоловіків, які цінують свій час та бездоганну якість оточення.</p>
-                                    <p>Ми не просто агентство. Ми — ваш персональний консьєрж у світі елітного дозвілля. Кожна анкета проходить триступеневу верифікацію особисто нами.</p>
-                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 uppercase text-[8px] tracking-[0.2em]">
-                                        <div className="p-4 border border-white/5">Анонімність</div>
-                                        <div className="p-4 border border-white/5">Якість</div>
-                                        <div className="p-4 border border-white/5">Безпека</div>
-                                        <div className="p-4 border border-white/5">Сервіс</div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                    </main>
+function createHeart(){
+    let heart = document.createElement("div");
 
-                    {/* Modal Model */}
-                    {selectedModel && (
-                        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-                            <div className="absolute inset-0 bg-black/95" onClick={() => setSelectedModel(null)}></div>
-                            <div className="bg-dark w-full max-w-4xl max-h-[90vh] overflow-y-auto no-scrollbar relative border border-gold/20 z-[210] flex flex-col md:flex-row animate-fade">
-                                <button onClick={() => setSelectedModel(null)} className="absolute top-4 right-4 text-4xl text-gold z-[220]">&times;</button>
-                                
-                                <div className="md:w-1/2">
-                                    <img src={selectedModel.photo} className="w-full h-[500px] md:h-full object-cover" />
-                                </div>
-                                
-                                <div className="md:w-1/2 p-8 md:p-12 space-y-8">
-                                    <h2 className="font-serif text-4xl gold-text uppercase">{selectedModel.name}</h2>
-                                    <div className="grid grid-cols-3 text-center border-y border-white/10 py-6 text-[10px] uppercase tracking-widest text-zinc-400">
-                                        <div><p className="text-zinc-600 mb-1">Зріст</p>{selectedModel.h}</div>
-                                        <div><p className="text-zinc-600 mb-1">Вага</p>{selectedModel.w}</div>
-                                        <div><p className="text-zinc-600 mb-1">Груди</p>{selectedModel.b}</div>
-                                    </div>
-                                    <p className="text-xs text-zinc-400 leading-relaxed italic">"{selectedModel.about}"</p>
-                                    <div className="bg-white/5 p-6 space-y-3 text-xs tracking-widest border border-white/5">
-                                        <div className="flex justify-between"><span>Година:</span><span className="text-gold font-bold">{selectedModel.price.h} грн</span></div>
-                                        <div className="flex justify-between border-t border-white/5 pt-2"><span>Ніч:</span><span className="text-gold font-bold">{selectedModel.price.n} грн</span></div>
-                                    </div>
-                                    <a href={TG_LINK} target="_blank" className="block w-full btn-gold text-center py-5 uppercase text-xs tracking-widest">Забронювати зустріч</a>
-                                </div>
-                            </div>
-                        </div>
-                    )}
+    heart.classList.add("heart");
+    heart.innerHTML = ["❤️","💕","💖","💗","🌹"][Math.floor(Math.random()*5)];
 
-                    <footer className="py-12 text-center text-[7px] text-zinc-800 uppercase tracking-[0.5em] border-t border-white/5">
-                        Velvet Elite © 2026 • Private Community • 18+ Only
-                    </footer>
-                </div>
-            );
-        };
+    heart.style.left = Math.random()*100+"vw";
+    heart.style.fontSize = (20+Math.random()*40)+"px";
+    heart.style.animationDuration = (4+Math.random()*5)+"s";
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
+    document.body.appendChild(heart);
+
+    setTimeout(()=>{
+        heart.remove();
+    },9000);
+}
+
+setInterval(createHeart,180);
+
+</script>
+
 </body>
 </html>
